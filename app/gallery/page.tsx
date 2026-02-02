@@ -3,48 +3,20 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 const galleryItems = [
-  {
-    id: 1,
-    type: "Pool Table",
-    title: "Classic Oak Pool Table",
-    image: "https://images.unsplash.com/photo-1606932880811-69fd17c5c0dc?q=80&w=2070&auto=format&fit=crop",
-    description: "8ft professional pool table with green felt",
-  },
-  {
-    id: 2,
-    type: "Marble Table",
-    title: "Carrara Marble Dining Table",
-    image: "https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=2070&auto=format&fit=crop",
-    description: "Elegant white marble with pedestal base",
-  },
-  {
-    id: 3,
-    type: "Pool Table",
-    title: "Walnut Pool Table",
-    image: "https://images.unsplash.com/photo-1606932880811-69fd17c5c0dc?q=80&w=2070&auto=format&fit=crop",
-    description: "Luxury 9ft table with burgundy felt",
-  },
-  {
-    id: 4,
-    type: "Marble Table",
-    title: "Nero Marquina Table",
-    image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=2070&auto=format&fit=crop",
-    description: "Stunning black marble table for 8 seats",
-  },
-  {
-    id: 5,
-    type: "Pool Table",
-    title: "Cherry Wood Pool Table",
-    image: "https://images.unsplash.com/photo-1606932880811-69fd17c5c0dc?q=80&w=2070&auto=format&fit=crop",
-    description: "Modern design with blue felt",
-  },
-  {
-    id: 6,
-    type: "Marble Table",
-    title: "Calacatta Gold Table",
-    image: "https://images.unsplash.com/photo-1617103996702-96ff29b1c467?q=80&w=2070&auto=format&fit=crop",
-    description: "Premium gold-veined marble dining table",
-  },
+  { id: 1, type: "Pool Table", title: "Marble – Black, U‑Frame, Camel Cloth", image: "/gallery/pool-table-1.png" },
+  { id: 2, type: "Pool Table", title: "Marble – Light, Wood Rails, Blue Cloth", image: "/gallery/pool-table-2.png" },
+  { id: 3, type: "Pool Table", title: "Marble – White Vein, Black Rails, Grey Cloth", image: "/gallery/pool-table-3.png" },
+  { id: 4, type: "Pool Table", title: "Marble – Black Streak, Fluted Base, Camel Cloth", image: "/gallery/pool-table-4.png" },
+  { id: 5, type: "Pool Table", title: "Hybrid – Wood Rails + Marble Plinth", image: "/gallery/pool-table-5.png" },
+  { id: 6, type: "Pool Table", title: "Classic Wood – Turned Legs, Green Cloth", image: "/gallery/pool-table-6.png" },
+  { id: 7, type: "Pool Table", title: "Marble – Beige, Geometric Base, Camel Cloth", image: "/gallery/pool-table-7.png" },
+  { id: 8, type: "Pool Table", title: "Composite – Striated Grey, U‑Frame, Green Cloth", image: "/gallery/pool-table-8.png" },
+  { id: 9, type: "Pool Table", title: "Project 9", image: "/gallery/pool-table-9.png" },
+  { id: 10, type: "Pool Table", title: "Project 10", image: "/gallery/pool-table-10.png" },
+  { id: 11, type: "Pool Table", title: "Project 11", image: "/gallery/pool-table-11.png" },
+  { id: 12, type: "Pool Table", title: "Project 12", image: "/gallery/pool-table-12.png" },
+  { id: 13, type: "Pool Table", title: "Project 13", image: "/gallery/pool-table-13.png" },
+  { id: 14, type: "Pool Table", title: "Project 14", image: "/gallery/pool-table-14.png" },
 ];
 
 export default function GalleryPage() {

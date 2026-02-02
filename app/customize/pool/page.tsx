@@ -141,6 +141,37 @@ export default function PoolTableCustomizer() {
           </p>
         </div>
 
+        {/* Quick Presets */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Quick presets</h2>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => { setMaterial("marble"); setMarbleType("nero"); setClothColor("camel"); setLegStyle("modern"); }}
+              className="px-3 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+            >
+              Marble Black • U‑Frame • Camel
+            </button>
+            <button
+              onClick={() => { setMaterial("marble"); setMarbleType("calacatta"); setClothColor("blue"); setLegStyle("modern"); }}
+              className="px-3 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+            >
+              Light Marble • Wood Rails • Blue
+            </button>
+            <button
+              onClick={() => { setMaterial("wood"); setWoodType("walnut"); setClothColor("green"); setLegStyle("classic"); }}
+              className="px-3 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+            >
+              Classic Wood • Green
+            </button>
+            <button
+              onClick={() => { setMaterial("marble"); setMarbleType("emperador"); setClothColor("camel"); setLegStyle("geometric"); }}
+              className="px-3 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+            >
+              Beige Marble • Geometric • Camel
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Preview Section */}
           <div className="bg-white rounded-lg shadow-lg p-6 lg:sticky lg:top-24 h-fit">
