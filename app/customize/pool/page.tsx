@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, MessageCircle } from "lucide-react";
-import PoolTableVisual from "@/components/PoolTableVisual";
+import PoolTable3D from "@/components/PoolTable3D";
 
 const sizes = [
   { value: "7ft", label: "7 ft", price: 2000 },
@@ -144,12 +144,15 @@ export default function PoolTableCustomizer() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Preview Section */}
           <div className="bg-white rounded-lg shadow-lg p-6 lg:sticky lg:top-24 h-fit">
-            <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
+            <h2 className="text-xl font-semibold mb-4">3D Live Preview</h2>
+            <p className="text-sm text-gray-600 mb-3">Drag to rotate • Scroll to zoom • Right-click to pan</p>
             <div className="aspect-[4/3]">
-              <PoolTableVisual
+              <PoolTable3D
                 size={size}
+                material={material}
                 woodType={woodType}
-                feltColor={feltColor}
+                marbleType={marbleType}
+                clothColor={clothColor}
                 legStyle={legStyle}
               />
             </div>

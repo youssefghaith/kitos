@@ -7,7 +7,7 @@ const galleryItems = [
     id: 1,
     type: "Pool Table",
     title: "Classic Oak Pool Table",
-    image: "https://images.unsplash.com/photo-1626265423142-fb459302d640?q=80&w=2070&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1606932880811-69fd17c5c0dc?q=80&w=2070&auto=format&fit=crop",
     description: "8ft professional pool table with green felt",
   },
   {
@@ -21,7 +21,7 @@ const galleryItems = [
     id: 3,
     type: "Pool Table",
     title: "Walnut Pool Table",
-    image: "https://images.unsplash.com/photo-1574643156929-51fa098b0394?q=80&w=2070&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1606932880811-69fd17c5c0dc?q=80&w=2070&auto=format&fit=crop",
     description: "Luxury 9ft table with burgundy felt",
   },
   {

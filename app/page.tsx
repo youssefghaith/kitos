@@ -10,7 +10,7 @@ export default function Home() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1574643156929-51fa098b0394?q=80&w=2070&auto=format&fit=crop"
+            src="https://images.unsplash.com/photo-1606932880811-69fd17c5c0dc?q=80&w=2070&auto=format&fit=crop"
             alt="Luxury pool table"
             fill
             className="object-cover brightness-50"
@@ -118,7 +118,7 @@ export default function Home() {
                 {/* Wood Option */}
                 <div className="relative h-64 md:h-auto">
                   <Image
-                    src="https://images.unsplash.com/photo-1626265423142-fb459302d640?q=80&w=2070&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1606932880811-69fd17c5c0dc?q=80&w=2070&auto=format&fit=crop"
                     alt="Wood pool table"
                     fill
                     className="object-cover"
