@@ -11,6 +11,11 @@ const sizes = [
   { value: "9ft", label: "9 ft", price: 3000 },
 ];
 
+const materials = [
+  { value: "wood", label: "Wood", price: 0 },
+  { value: "marble", label: "Marble", price: 2000 },
+];
+
 const woodTypes = [
   { value: "oak", label: "Oak", price: 0 },
   { value: "walnut", label: "Walnut", price: 300 },
@@ -18,12 +23,26 @@ const woodTypes = [
   { value: "cherry", label: "Cherry", price: 350 },
 ];
 
-const feltColors = [
-  { value: "green", label: "Green", color: "#0a5f38" },
-  { value: "blue", label: "Blue", color: "#1e40af" },
-  { value: "red", label: "Red", color: "#991b1b" },
-  { value: "black", label: "Black", color: "#1f2937" },
+const marbleTypes = [
+  { value: "carrara", label: "Carrara White", price: 0 },
+  { value: "calacatta", label: "Calacatta Gold", price: 800 },
+  { value: "nero", label: "Nero Marquina", price: 600 },
+  { value: "emperador", label: "Emperador Brown", price: 500 },
+];
+
+const clothMaterials = [
+  { value: "worsted", label: "Worsted Cloth", price: 0, description: "Professional tournament grade" },
+  { value: "woolen", label: "Woolen Cloth", price: -200, description: "Classic recreational" },
+  { value: "speed", label: "Speed Cloth", price: 300, description: "Fast tournament play" },
+];
+
+const clothColors = [
+  { value: "green", label: "Tournament Green", color: "#0a5f38" },
+  { value: "blue", label: "Electric Blue", color: "#1e40af" },
+  { value: "red", label: "Championship Red", color: "#991b1b" },
+  { value: "black", label: "Midnight Black", color: "#1f2937" },
   { value: "burgundy", label: "Burgundy", color: "#7c2d12" },
+  { value: "camel", label: "Camel", color: "#c19a6b" },
 ];
 
 const legStyles = [
@@ -33,29 +52,39 @@ const legStyles = [
 ];
 
 const accessories = [
-  { value: "cueRack", label: "Cue Rack", price: 150 },
-  { value: "lighting", label: "Table Lighting", price: 400 },
-  { value: "cover", label: "Table Cover", price: 100 },
-  { value: "cueSet", label: "Professional Cue Set", price: 300 },
+  { value: "diningTop", label: "Dining Table Conversion Top", price: 800 },
+  { value: "chairs", label: "Matching Dining Chairs (Set of 6)", price: 1200 },
+  { value: "cueRack", label: "Wall-Mounted Cue Rack", price: 150 },
+  { value: "lighting", label: "Overhead Table Lighting", price: 400 },
+  { value: "cover", label: "Premium Table Cover", price: 100 },
+  { value: "cueSet", label: "Professional Cue Set (4 cues)", price: 300 },
+  { value: "ballSet", label: "Premium Ball Set", price: 200 },
 ];
 
 export default function PoolTableCustomizer() {
+  const [material, setMaterial] = useState("wood");
   const [size, setSize] = useState("8ft");
   const [woodType, setWoodType] = useState("oak");
-  const [feltColor, setFeltColor] = useState("green");
+  const [marbleType, setMarbleType] = useState("carrara");
+  const [clothMaterial, setClothMaterial] = useState("worsted");
+  const [clothColor, setClothColor] = useState("green");
   const [legStyle, setLegStyle] = useState("classic");
   const [selectedAccessories, setSelectedAccessories] = useState<string[]>([]);
 
   const calculatePrice = () => {
+    const materialPrice = materials.find((m) => m.value === material)?.price || 0;
     const sizePrice = sizes.find((s) => s.value === size)?.price || 0;
-    const woodPrice = woodTypes.find((w) => w.value === woodType)?.price || 0;
+    const surfacePrice = material === "wood" 
+      ? (woodTypes.find((w) => w.value === woodType)?.price || 0)
+      : (marbleTypes.find((m) => m.value === marbleType)?.price || 0);
+    const clothMaterialPrice = clothMaterials.find((c) => c.value === clothMaterial)?.price || 0;
     const legPrice = legStyles.find((l) => l.value === legStyle)?.price || 0;
     const accessoriesPrice = selectedAccessories.reduce((total, acc) => {
       const accessory = accessories.find((a) => a.value === acc);
       return total + (accessory?.price || 0);
     }, 0);
 
-    return sizePrice + woodPrice + legPrice + accessoriesPrice;
+    return materialPrice + sizePrice + surfacePrice + clothMaterialPrice + legPrice + accessoriesPrice;
   };
 
   const toggleAccessory = (value: string) => {
@@ -72,11 +101,17 @@ export default function PoolTableCustomizer() {
       .map((acc) => accessories.find((a) => a.value === acc)?.label)
       .join(", ");
 
+    const surfaceType = material === "wood"
+      ? `Wood Type: ${woodTypes.find((w) => w.value === woodType)?.label}`
+      : `Marble Type: ${marbleTypes.find((m) => m.value === marbleType)?.label}`;
+
     return encodeURIComponent(
       `Hi! I'd like to request a quote for a custom pool table:\n\n` +
+        `Material: ${materials.find((m) => m.value === material)?.label}\n` +
         `Size: ${sizes.find((s) => s.value === size)?.label}\n` +
-        `Wood Type: ${woodTypes.find((w) => w.value === woodType)?.label}\n` +
-        `Felt Color: ${feltColors.find((f) => f.value === feltColor)?.label}\n` +
+        `${surfaceType}\n` +
+        `Cloth Material: ${clothMaterials.find((c) => c.value === clothMaterial)?.label}\n` +
+        `Cloth Color: ${clothColors.find((f) => f.value === clothColor)?.label}\n` +
         `Leg Style: ${legStyles.find((l) => l.value === legStyle)?.label}\n` +
         `Accessories: ${accessoriesList || "None"}\n\n` +
         `Estimated Price: $${price.toLocaleString()}\n\n` +
@@ -143,6 +178,29 @@ export default function PoolTableCustomizer() {
 
           {/* Options Section */}
           <div className="space-y-6">
+            {/* Material Selection */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">Table Material</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {materials.map((m) => (
+                  <button
+                    key={m.value}
+                    onClick={() => setMaterial(m.value)}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      material === m.value
+                        ? "border-gray-900 bg-gray-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="font-semibold">{m.label}</div>
+                    <div className="text-sm text-gray-600">
+                      {m.price === 0 ? "Base Price" : `+$${m.price.toLocaleString()}`}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Size Selection */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-lg font-semibold mb-4">Table Size</h3>
@@ -166,50 +224,103 @@ export default function PoolTableCustomizer() {
               </div>
             </div>
 
-            {/* Wood Type Selection */}
+            {/* Surface Type Selection - Wood or Marble */}
+            {material === "wood" ? (
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Wood Type</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {woodTypes.map((w) => (
+                    <button
+                      key={w.value}
+                      onClick={() => setWoodType(w.value)}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        woodType === w.value
+                          ? "border-gray-900 bg-gray-50"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="font-semibold">{w.label}</div>
+                      <div className="text-sm text-gray-600">
+                        {w.price === 0 ? "Included" : `+$${w.price}`}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Marble Type</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {marbleTypes.map((m) => (
+                    <button
+                      key={m.value}
+                      onClick={() => setMarbleType(m.value)}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        marbleType === m.value
+                          ? "border-gray-900 bg-gray-50"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="font-semibold">{m.label}</div>
+                      <div className="text-sm text-gray-600">
+                        {m.price === 0 ? "Included" : `+$${m.price}`}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Cloth Material Selection */}
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Wood Type</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {woodTypes.map((w) => (
+              <h3 className="text-lg font-semibold mb-4">Billiard Cloth Material</h3>
+              <div className="space-y-3">
+                {clothMaterials.map((c) => (
                   <button
-                    key={w.value}
-                    onClick={() => setWoodType(w.value)}
-                    className={`p-4 rounded-lg border-2 transition-all ${
-                      woodType === w.value
+                    key={c.value}
+                    onClick={() => setClothMaterial(c.value)}
+                    className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                      clothMaterial === c.value
                         ? "border-gray-900 bg-gray-50"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    <div className="font-semibold">{w.label}</div>
-                    <div className="text-sm text-gray-600">
-                      {w.price === 0 ? "Included" : `+$${w.price}`}
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-semibold">{c.label}</div>
+                        <div className="text-sm text-gray-500">{c.description}</div>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {c.price === 0 ? "Included" : c.price > 0 ? `+$${c.price}` : `$${c.price}`}
+                      </div>
                     </div>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Felt Color Selection */}
+            {/* Cloth Color Selection */}
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Felt Color</h3>
-              <div className="grid grid-cols-5 gap-3">
-                {feltColors.map((f) => (
+              <h3 className="text-lg font-semibold mb-4">Cloth Color</h3>
+              <div className="grid grid-cols-3 gap-3">
+                {clothColors.map((f) => (
                   <button
                     key={f.value}
-                    onClick={() => setFeltColor(f.value)}
-                    className={`aspect-square rounded-lg border-4 transition-all ${
-                      feltColor === f.value
-                        ? "border-gray-900 scale-110"
+                    onClick={() => setClothColor(f.value)}
+                    className={`p-3 rounded-lg border-4 transition-all ${
+                      clothColor === f.value
+                        ? "border-gray-900"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
-                    style={{ backgroundColor: f.color }}
-                    title={f.label}
-                  />
+                  >
+                    <div 
+                      className="w-full h-12 rounded mb-2"
+                      style={{ backgroundColor: f.color }}
+                    />
+                    <div className="text-xs font-medium text-center">{f.label}</div>
+                  </button>
                 ))}
               </div>
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                {feltColors.find((f) => f.value === feltColor)?.label}
-              </p>
             </div>
 
             {/* Leg Style Selection */}

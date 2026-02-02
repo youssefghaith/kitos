@@ -99,72 +99,98 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Product Types Section */}
+      {/* Product Section */}
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Collections
+              Premium Pool Tables
             </h2>
             <p className="text-lg text-gray-600">
-              Explore our premium table collections
+              Choose between wood or marble finishes for your custom pool table
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Pool Tables */}
+          <div className="max-w-4xl mx-auto">
+            {/* Pool Table Card */}
             <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="relative h-64">
-                <Image
-                  src="https://images.unsplash.com/photo-1626265423142-fb459302d640?q=80&w=2070&auto=format&fit=crop"
-                  alt="Pool table"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
-                  <h3 className="text-2xl font-bold text-white p-6">Pool Tables</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Wood Option */}
+                <div className="relative h-64 md:h-auto">
+                  <Image
+                    src="https://images.unsplash.com/photo-1626265423142-fb459302d640?q=80&w=2070&auto=format&fit=crop"
+                    alt="Wood pool table"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div className="p-6 text-white">
+                      <h4 className="text-xl font-bold mb-1">Wood Finish</h4>
+                      <p className="text-sm">Oak, Walnut, Mahogany, Cherry</p>
+                    </div>
+                  </div>
+                </div>
+                {/* Marble Option */}
+                <div className="relative h-64 md:h-auto">
+                  <Image
+                    src="https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=2070&auto=format&fit=crop"
+                    alt="Marble pool table"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div className="p-6 text-white">
+                      <h4 className="text-xl font-bold mb-1">Marble Finish</h4>
+                      <p className="text-sm">Carrara, Calacatta, Nero, Emperador</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">
-                  Professional-grade pool tables with premium felt and solid
-                  wood construction. Perfect for game rooms and entertainment
-                  spaces.
+              <div className="p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Custom Pool Tables
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Professional-grade pool tables available in premium wood or
+                  luxurious marble finishes. Customize size, felt color, leg
+                  style, and accessories to create your perfect gaming table.
                 </p>
-                <Link
-                  href="/customize/pool"
-                  className="inline-flex items-center text-gray-900 font-semibold hover:underline"
-                >
-                  Customize Your Pool Table
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Marble Tables */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="relative h-64">
-                <Image
-                  src="https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=2070&auto=format&fit=crop"
-                  alt="Marble table"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
-                  <h3 className="text-2xl font-bold text-white p-6">Marble Tables</h3>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <div className="text-sm font-semibold text-gray-700 mb-1">
+                      Material Options
+                    </div>
+                    <div className="text-sm text-gray-600">Wood or Marble</div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-gray-700 mb-1">
+                      Sizes Available
+                    </div>
+                    <div className="text-sm text-gray-600">7ft, 8ft, 9ft</div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-gray-700 mb-1">
+                      Felt Colors
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      5 Professional Colors
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-gray-700 mb-1">
+                      Leg Styles
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Classic, Modern, Ornate
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">
-                  Elegant marble tables that combine luxury with functionality.
-                  Ideal for dining rooms and sophisticated living spaces.
-                </p>
                 <Link
-                  href="/customize/marble"
-                  className="inline-flex items-center text-gray-900 font-semibold hover:underline"
+                  href="/customize"
+                  className="inline-flex items-center bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
                 >
-                  Customize Your Marble Table
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  Start Customizing
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </div>
             </div>
