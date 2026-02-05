@@ -6,16 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "pages:build": "next build && npx @cloudflare/next-on-pages@1",
+    "pages:deploy": "npx wrangler pages deploy .vercel/output/static --project-name=pool-table-site"
   },
   "dependencies": {
+    "@cloudflare/workers-types": "^4.20260203.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@supabase/supabase-js": "^2.93.3",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "three": "^0.182.0"
+    "three": "^0.182.0",
+    "wrangler": "^4.62.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

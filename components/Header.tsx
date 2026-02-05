@@ -26,10 +26,22 @@ export default function Header() {
               Home
             </Link>
             <Link
-              href="/customize"
+              href="/marble"
               className="text-gray-700 hover:text-gray-900 transition-colors"
             >
-              Customize
+              Marble
+            </Link>
+            <Link
+              href="/wood"
+              className="text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              Wood
+            </Link>
+            <Link
+              href="/hybrid"
+              className="text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              Hybrid
             </Link>
             <Link
               href="/gallery"
@@ -70,11 +82,25 @@ export default function Header() {
               Home
             </Link>
             <Link
-              href="/customize"
+              href="/marble"
               className="block text-gray-700 hover:text-gray-900 py-2"
               onClick={() => setIsMenuOpen(false)}
             >
-              Customize
+              Marble
+            </Link>
+            <Link
+              href="/wood"
+              className="block text-gray-700 hover:text-gray-900 py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Wood
+            </Link>
+            <Link
+              href="/hybrid"
+              className="block text-gray-700 hover:text-gray-900 py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Hybrid
             </Link>
             <Link
               href="/gallery"

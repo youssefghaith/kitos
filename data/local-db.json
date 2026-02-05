@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "slug": "marble",
+      "name": "Marble",
+      "description": "",
+      "hero_image_url": ""
+    },
+    {
+      "slug": "wood",
+      "name": "Wood",
+      "description": "",
+      "hero_image_url": ""
+    },
+    {
+      "slug": "hybrid",
+      "name": "Hybrid",
+      "description": "",
+      "hero_image_url": ""
+    }
+  ],
+  "designs": [
+    {
+      "id": "188202cf-3d3c-4b69-b1b3-83798328417b",
+      "slug": "youssef-test",
+      "name": "youssef-test",
+      "category": "marble",
+      "short_description": "youssef-test description",
+      "hero_image_url": null,
+      "is_featured": true,
+      "created_at": "2026-02-05T13:26:35.741Z"
+    },
+    {
+      "id": "97d8d68c-f480-4e6e-9d13-83b72e32bd09",
+      "slug": "wood-test",
+      "name": "wood-test",
+      "category": "wood",
+      "short_description": "wood-test",
+      "hero_image_url": "/uploads/wood-test/1770301181121_screenshot-2026-02-02-at-1.54.24-pm.png",
+      "is_featured": true,
+      "created_at": "2026-02-05T14:19:41.133Z"
+    }
+  ],
+  "variants": [
+    {
+      "id": "40c4176d-3674-4031-b61d-495e356c9fdd",
+      "design_slug": "youssef-test",
+      "material": "nero",
+      "cloth": "charcoal",
+      "wood_accent": "black",
+      "image_url": "/uploads/youssef-test/1770298012140_screenshot-2026-02-02-at-1.53.34-pm.png"
+    },
+    {
+      "id": "57c431bf-b3c9-4e7f-81d6-b531d02c66b1",
+      "design_slug": "youssef-test",
+      "material": "calacatta",
+      "cloth": "green",
+      "wood_accent": "black",
+      "image_url": "/uploads/youssef-test/1770298029650_screenshot-2026-02-02-at-1.54.01-pm.png"
+    },
+    {
+      "id": "9e92d8f4-50d2-4eb6-a743-4142a1b31062",
+      "design_slug": "wood-test",
+      "material": "nero",
+      "cloth": "charcoal",
+      "wood_accent": "black",
+      "image_url": "/uploads/wood-test/1770301203235_screenshot-2026-02-02-at-1.54.36-pm.png"
+    }
+  ]
+}
