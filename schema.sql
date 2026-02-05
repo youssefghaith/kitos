@@ -9,6 +9,16 @@ CREATE TABLE IF NOT EXISTS categories (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
+-- Gallery table: stores curated project images
+CREATE TABLE IF NOT EXISTS gallery (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  type TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  sort_order INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
 -- Designs table: stores pool/marble table designs
 CREATE TABLE IF NOT EXISTS designs (
   id TEXT PRIMARY KEY,

@@ -140,7 +140,7 @@ export default function DetailPage() {
 
         if (variants && variants.length > 0) {
           const apiMap: Record<string, string> = {};
-          const keys = groups.map((g) => g.key);
+          const keys = groups.map((g: OptionGroup) => g.key);
           variants.forEach((v: any) => {
             const options =
               v.options ??
