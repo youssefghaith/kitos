@@ -19,6 +19,11 @@ export default function AdminDashboardPage() {
   const [selected, setSelected] = useState<DesignRecord | null>(null);
   const [variants, setVariants] = useState<VariantRecord[]>([]);
   const [designOptionGroups, setDesignOptionGroups] = useState<OptionGroup[]>([]);
+  const [galleryItems, setGalleryItems] = useState<
+    { id: string; title: string; type: string; image_url: string; sort_order?: number }[]
+  >([]);
+  const [galleryEdits, setGalleryEdits] = useState<Record<string, { title: string; type: string; sort_order?: number; image_url: string }>>({});
+  const [galleryFiles, setGalleryFiles] = useState<Record<string, File | null>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [createdDesignName, setCreatedDesignName] = useState<string | null>(null);
@@ -40,10 +45,17 @@ export default function AdminDashboardPage() {
   const [variantSelections, setVariantSelections] = useState<Record<string, string>>({});
   const [newGroup, setNewGroup] = useState({ name: "", key: "" });
   const [newOptionInputs, setNewOptionInputs] = useState<Record<string, string>>({});
+  const [newGallery, setNewGallery] = useState({
+    title: "",
+    type: "Pool Table",
+    sort_order: 0,
+    file: null as File | null,
+  });
 
   useEffect(() => {
     loadDesigns();
     loadCategories();
+    loadGallery();
   }, []);
 
   const loadDesigns = async () => {
@@ -154,6 +166,137 @@ export default function AdminDashboardPage() {
       await loadCategories();
     } catch (err: any) {
       setError(err?.message ?? "Failed to update category");
+    }
+  };
+
+  const loadGallery = async () => {
+    try {
+      const response = await fetch("/api/cloudflare/gallery");
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to load gallery");
+      }
+      const data = await response.json();
+      const items = (data.items as any[]) ?? [];
+      setGalleryItems(items);
+      const editMap: Record<string, { title: string; type: string; sort_order?: number; image_url: string }> = {};
+      items.forEach((item) => {
+        editMap[item.id] = {
+          title: item.title,
+          type: item.type,
+          sort_order: item.sort_order ?? 0,
+          image_url: item.image_url,
+        };
+      });
+      setGalleryEdits(editMap);
+    } catch (err: any) {
+      setError(err?.message ?? "Failed to load gallery");
+    }
+  };
+
+  const handleCreateGallery = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!newGallery.file) {
+      setError("Select an image for the gallery item.");
+      return;
+    }
+    try {
+      setError(null);
+      const formData = new FormData();
+      formData.append("file", newGallery.file);
+      formData.append("designSlug", "gallery");
+
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const uploadData = await uploadResponse.json();
+      if (!uploadResponse.ok) {
+        throw new Error(uploadData.error || "Gallery image upload failed");
+      }
+
+      const response = await fetch("/api/cloudflare/gallery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: newGallery.title,
+          type: newGallery.type,
+          image_url: uploadData.url,
+          sort_order: newGallery.sort_order,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create gallery item");
+      }
+
+      setNewGallery({ title: "", type: "Pool Table", sort_order: 0, file: null });
+      const input = document.getElementById("gallery-file") as HTMLInputElement | null;
+      if (input) input.value = "";
+      await loadGallery();
+    } catch (err: any) {
+      setError(err?.message ?? "Failed to create gallery item");
+    }
+  };
+
+  const handleSaveGallery = async (id: string) => {
+    try {
+      setError(null);
+      const edits = galleryEdits[id];
+      if (!edits) return;
+
+      let imageUrl = edits.image_url;
+      const file = galleryFiles[id];
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("designSlug", "gallery");
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadResponse.json();
+        if (!uploadResponse.ok) {
+          throw new Error(uploadData.error || "Gallery image upload failed");
+        }
+        imageUrl = uploadData.url;
+      }
+
+      const response = await fetch("/api/cloudflare/gallery", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          title: edits.title,
+          type: edits.type,
+          image_url: imageUrl,
+          sort_order: edits.sort_order ?? 0,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update gallery item");
+      }
+      setGalleryFiles((prev) => ({ ...prev, [id]: null }));
+      await loadGallery();
+    } catch (err: any) {
+      setError(err?.message ?? "Failed to update gallery item");
+    }
+  };
+
+  const handleDeleteGallery = async (id: string) => {
+    try {
+      setError(null);
+      const response = await fetch(`/api/cloudflare/gallery?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete gallery item");
+      }
+      await loadGallery();
+    } catch (err: any) {
+      setError(err?.message ?? "Failed to delete gallery item");
     }
   };
 
@@ -566,6 +709,143 @@ export default function AdminDashboardPage() {
                   Create design
                 </button>
               </form>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-5">
+              <h2 className="text-lg font-semibold mb-4">Gallery</h2>
+
+              <form onSubmit={handleCreateGallery} className="space-y-3 text-sm mb-6">
+                <div>
+                  <label className="block text-gray-700 mb-1">Title</label>
+                  <input
+                    value={newGallery.title}
+                    onChange={(e) => setNewGallery({ ...newGallery, title: e.target.value })}
+                    required
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-xs">Type</label>
+                    <input
+                      value={newGallery.type}
+                      onChange={(e) => setNewGallery({ ...newGallery, type: e.target.value })}
+                      className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-gray-900"
+                      placeholder="Pool Table"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-xs">Sort order</label>
+                    <input
+                      type="number"
+                      value={newGallery.sort_order}
+                      onChange={(e) =>
+                        setNewGallery({ ...newGallery, sort_order: Number(e.target.value) })
+                      }
+                      className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-gray-900"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-1 text-xs">Image</label>
+                  <input
+                    id="gallery-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setNewGallery({ ...newGallery, file: e.target.files?.[0] ?? null })
+                    }
+                    className="block w-full text-xs text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-900 file:text-white hover:file:bg-gray-800"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={!newGallery.file}
+                  className="w-full rounded-md bg-gray-900 text-white py-1.5 font-semibold text-sm hover:bg-gray-800 disabled:opacity-60"
+                >
+                  Add gallery item
+                </button>
+              </form>
+
+              <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
+                {galleryItems.length === 0 ? (
+                  <p className="text-xs text-gray-500">No gallery items yet.</p>
+                ) : (
+                  galleryItems.map((item) => (
+                    <div key={item.id} className="rounded-md border border-gray-200 p-3">
+                      <div className="grid grid-cols-1 gap-2 text-xs">
+                        <input
+                          value={galleryEdits[item.id]?.title ?? item.title}
+                          onChange={(e) =>
+                            setGalleryEdits((prev) => ({
+                              ...prev,
+                              [item.id]: {
+                                ...(prev[item.id] ?? item),
+                                title: e.target.value,
+                              },
+                            }))
+                          }
+                          className="w-full rounded-md border border-gray-300 px-2.5 py-1.5"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            value={galleryEdits[item.id]?.type ?? item.type}
+                            onChange={(e) =>
+                              setGalleryEdits((prev) => ({
+                                ...prev,
+                                [item.id]: {
+                                  ...(prev[item.id] ?? item),
+                                  type: e.target.value,
+                                },
+                              }))
+                            }
+                            className="w-full rounded-md border border-gray-300 px-2.5 py-1.5"
+                          />
+                          <input
+                            type="number"
+                            value={galleryEdits[item.id]?.sort_order ?? item.sort_order ?? 0}
+                            onChange={(e) =>
+                              setGalleryEdits((prev) => ({
+                                ...prev,
+                                [item.id]: {
+                                  ...(prev[item.id] ?? item),
+                                  sort_order: Number(e.target.value),
+                                },
+                              }))
+                            }
+                            className="w-full rounded-md border border-gray-300 px-2.5 py-1.5"
+                          />
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) =>
+                            setGalleryFiles((prev) => ({
+                              ...prev,
+                              [item.id]: e.target.files?.[0] ?? null,
+                            }))
+                          }
+                          className="block w-full text-xs text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-900 file:text-white hover:file:bg-gray-800"
+                        />
+                        <div className="flex items-center justify-between">
+                          <button
+                            onClick={() => handleSaveGallery(item.id)}
+                            className="text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-300 hover:border-gray-400"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => handleDeleteGallery(item.id)}
+                            className="text-xs text-red-600 hover:text-red-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
 
