@@ -776,20 +776,37 @@ export default function AdminDashboardPage() {
                   galleryItems.map((item) => (
                     <div key={item.id} className="rounded-md border border-gray-200 p-3">
                       <div className="grid grid-cols-1 gap-2 text-xs">
-                        <input
-                          value={galleryEdits[item.id]?.title ?? item.title}
-                          onChange={(e) => {
-                            setGalleryEdits((prev) => ({
-                              ...prev,
-                              [item.id]: {
-                                ...(prev[item.id] ?? item),
-                                title: e.target.value,
-                              },
-                            }));
-                            setGalleryDirty((prev) => ({ ...prev, [item.id]: true }));
-                          }}
-                          className="w-full rounded-md border border-gray-300 px-2.5 py-1.5"
-                        />
+                        <div className="flex items-center gap-3">
+                          <div className="h-12 w-12 rounded-md overflow-hidden border border-gray-200 bg-gray-50">
+                            {galleryEdits[item.id]?.image_url || item.image_url ? (
+                              <img
+                                src={galleryEdits[item.id]?.image_url ?? item.image_url}
+                                alt={galleryEdits[item.id]?.title ?? item.title}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center text-[10px] text-gray-400">
+                                No image
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <input
+                              value={galleryEdits[item.id]?.title ?? item.title}
+                              onChange={(e) => {
+                                setGalleryEdits((prev) => ({
+                                  ...prev,
+                                  [item.id]: {
+                                    ...(prev[item.id] ?? item),
+                                    title: e.target.value,
+                                  },
+                                }));
+                                setGalleryDirty((prev) => ({ ...prev, [item.id]: true }));
+                              }}
+                              className="w-full rounded-md border border-gray-300 px-2.5 py-1.5"
+                            />
+                          </div>
+                        </div>
                         <div className="grid grid-cols-2 gap-2">
                           <input
                             value={galleryEdits[item.id]?.type ?? item.type}
