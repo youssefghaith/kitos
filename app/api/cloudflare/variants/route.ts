@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "crypto";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { MARBLE_DESIGNS } from "@/lib/marbleDesigns";
 
@@ -72,7 +71,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const id = randomUUID();
+    const id = crypto.randomUUID();
     const cfEnv = getCloudflareEnv();
 
     if (cfEnv) {
@@ -87,7 +86,7 @@ export async function POST(req: NextRequest) {
 
         if (!designResult) {
           // Create design if it doesn't exist
-          const designId = randomUUID();
+          const designId = crypto.randomUUID();
           await cfEnv.DB.prepare(
             "INSERT INTO designs (id, slug, name, category, is_featured) VALUES (?, ?, ?, ?, 1)"
           )

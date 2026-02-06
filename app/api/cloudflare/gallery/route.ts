@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "crypto";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 
 export const runtime = "edge";
@@ -36,7 +35,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const id = randomUUID();
+    const id = crypto.randomUUID();
     const cfEnv = getCloudflareEnv();
     if (cfEnv) {
       await cfEnv.DB.prepare(

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "crypto";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { MARBLE_DESIGNS } from "@/lib/marbleDesigns";
 
@@ -86,7 +85,7 @@ export async function POST(req: NextRequest) {
     }
 
     const cfEnv = getCloudflareEnv();
-    const id = randomUUID();
+    const id = crypto.randomUUID();
     if (cfEnv) {
       await cfEnv.DB.prepare(
         "INSERT INTO designs (id, slug, name, category, short_description, hero_image_url, is_featured, option_groups) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
