@@ -149,7 +149,7 @@ export default function DetailPage() {
                 cloth: v.cloth,
                 wood_accent: v.wood_accent,
               };
-            const mapKey = keys.map((k) => options?.[k] ?? "").join("|");
+            const mapKey = keys.map((k: string) => options?.[k] ?? "").join("|");
             apiMap[mapKey] = v.image_url;
           });
           setActiveImageMap(apiMap);
