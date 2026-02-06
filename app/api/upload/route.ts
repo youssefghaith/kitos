@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { join } from "path";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+
+export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   try {
@@ -54,25 +55,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Fallback to local storage
-    const uploadDir = join(process.cwd(), "public", "uploads", designSlug);
-    const filepath = join(uploadDir, filename);
-
-    // Create directory if it doesn't exist
-    const { mkdir, writeFile } = await import("fs/promises");
-    await mkdir(uploadDir, { recursive: true });
-
-    await writeFile(filepath, buffer);
-
-    // Return the public URL path
-    const publicUrl = `/uploads/${designSlug}/${filename}`;
-
-    return NextResponse.json({
-      success: true,
-      url: publicUrl,
-      filename,
-      storage: "local",
-    });
+    return NextResponse.json(
+      { error: "R2 is not configured in this environment." },
+      { status: 500 }
+    );
   } catch (err: any) {
     console.error("Upload error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });

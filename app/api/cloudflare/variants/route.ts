@@ -1,26 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { join } from "path";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { MARBLE_DESIGNS } from "@/lib/marbleDesigns";
 
-type LocalDb = {
-  designs: any[];
-  variants: any[];
-};
-
-const LOCAL_DB_PATH = join(process.cwd(), "data", "local-db.json");
-
-async function readLocalDb(): Promise<LocalDb> {
-  const { readFile } = await import("fs/promises");
-  const raw = await readFile(LOCAL_DB_PATH, "utf-8");
-  return JSON.parse(raw) as LocalDb;
-}
-
-async function writeLocalDb(db: LocalDb) {
-  const { writeFile } = await import("fs/promises");
-  await writeFile(LOCAL_DB_PATH, JSON.stringify(db, null, 2));
-}
+export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   try {
@@ -55,29 +38,6 @@ export async function GET(req: NextRequest) {
       } catch (d1Error) {
         console.error("D1 query failed:", d1Error);
       }
-    }
-
-    // Local dev fallback (file-backed)
-    try {
-      const localDb = await readLocalDb();
-      const variants = (localDb.variants ?? []).filter(
-        (v) => v.design_slug === designSlug
-      );
-      if (variants.length > 0) {
-        const normalized = variants.map((v: any) => ({
-          ...v,
-          options:
-            v.options ??
-            {
-              material: v.material,
-              cloth: v.cloth,
-              wood_accent: v.wood_accent,
-            },
-        }));
-        return NextResponse.json({ variants: normalized, source: "local-file" });
-      }
-    } catch {
-      // ignore and fall back to static data
     }
 
     // Fallback to static data
@@ -193,40 +153,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Local dev fallback: persist to file
-    const localDb = await readLocalDb();
-    localDb.variants = [
-      ...(localDb.variants ?? []),
-      {
-        id,
-        design_slug,
-        material: material ?? "",
-        cloth: cloth ?? "",
-        wood_accent: wood_accent ?? "",
-        image_url,
-        options: options ?? null,
-      },
-    ];
-
-    // Auto-set hero image if empty
-    const designIndex = (localDb.designs ?? []).findIndex((d) => d.slug === design_slug);
-    if (designIndex !== -1) {
-      const existing = localDb.designs[designIndex];
-      if (!existing.hero_image_url) {
-        localDb.designs[designIndex] = {
-          ...existing,
-          hero_image_url: image_url,
-        };
-      }
-    }
-
-    await writeLocalDb(localDb);
-
-    return NextResponse.json({
-      success: true,
-      variant: { id, design_slug, material, cloth, wood_accent, image_url, options },
-      storage: "local-file",
-    });
+    return NextResponse.json(
+      { error: "D1 is not configured in this environment." },
+      { status: 500 }
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

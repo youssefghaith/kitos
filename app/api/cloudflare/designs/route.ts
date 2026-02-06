@@ -1,26 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { join } from "path";
 import { getCloudflareEnv } from "@/lib/cloudflare";
 import { MARBLE_DESIGNS } from "@/lib/marbleDesigns";
 
-type LocalDb = {
-  designs: any[];
-  variants: any[];
-};
-
-const LOCAL_DB_PATH = join(process.cwd(), "data", "local-db.json");
-
-async function readLocalDb(): Promise<LocalDb> {
-  const { readFile } = await import("fs/promises");
-  const raw = await readFile(LOCAL_DB_PATH, "utf-8");
-  return JSON.parse(raw) as LocalDb;
-}
-
-async function writeLocalDb(db: LocalDb) {
-  const { writeFile } = await import("fs/promises");
-  await writeFile(LOCAL_DB_PATH, JSON.stringify(db, null, 2));
-}
+export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   try {
@@ -82,39 +65,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Local dev fallback (file-backed). If empty, fall back to static data.
-    try {
-      const localDb = await readLocalDb();
-      let designs = localDb.designs ?? [];
-
-      if (!all) {
-        const selectedCategory = category ?? "marble";
-        designs = designs.filter((d) => d.category === selectedCategory);
-      }
-
-      if (featured === "1" || (!all && featured !== "0")) {
-        designs = designs.filter((d) => d.is_featured);
-      }
-
-      if (designs.length > 0) {
-        if (all) {
-          return NextResponse.json({ designs, source: "local-file" });
-        }
-
-        const mapped = designs.map((row: any) => ({
-          slug: row.slug,
-          name: row.name,
-          heroImage: row.hero_image_url || "/homepage/marble/marble-1.png",
-          description: row.short_description || "",
-          variants: [],
-        }));
-
-        return NextResponse.json({ designs: mapped, source: "local-file" });
-      }
-    } catch {
-      // ignore and fall back to static data
-    }
-
     // Fallback to static data
     return NextResponse.json({ designs: MARBLE_DESIGNS, source: "local" });
   } catch (err: any) {
@@ -169,27 +119,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Local dev fallback: persist to file
-    const localDb = await readLocalDb();
-    const design = {
-      id,
-      slug,
-      name,
-      category,
-      short_description: short_description ?? null,
-      hero_image_url: hero_image_url ?? null,
-      is_featured: Boolean(is_featured),
-      option_groups: Array.isArray(option_groups) ? option_groups : [],
-      created_at: new Date().toISOString(),
-    };
-    localDb.designs = [...(localDb.designs ?? []), design];
-    await writeLocalDb(localDb);
-
-    return NextResponse.json({
-      success: true,
-      design,
-      storage: "local-file",
-    });
+    return NextResponse.json(
+      { error: "D1 is not configured in this environment." },
+      { status: 500 }
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -236,29 +169,10 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: true, storage: "d1" });
     }
 
-    const localDb = await readLocalDb();
-    const designs = localDb.designs ?? [];
-    const index = designs.findIndex((d: any) => d.slug === slug);
-    if (index === -1) {
-      return NextResponse.json({ error: "Design not found" }, { status: 404 });
-    }
-
-    const existing = designs[index];
-    const updated = {
-      ...existing,
-      name: name ?? existing.name,
-      category: category ?? existing.category,
-      short_description: short_description ?? existing.short_description,
-      hero_image_url: hero_image_url ?? existing.hero_image_url,
-      is_featured: typeof is_featured === "boolean" ? is_featured : existing.is_featured,
-      option_groups: Array.isArray(option_groups) ? option_groups : existing.option_groups ?? [],
-    };
-
-    designs[index] = updated;
-    localDb.designs = designs;
-    await writeLocalDb(localDb);
-
-    return NextResponse.json({ success: true, design: updated, storage: "local-file" });
+    return NextResponse.json(
+      { error: "D1 is not configured in this environment." },
+      { status: 500 }
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

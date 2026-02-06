@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { join } from "path";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+
+export const runtime = "edge";
 
 type GalleryItem = {
   id: string;
@@ -10,23 +11,6 @@ type GalleryItem = {
   image_url: string;
   sort_order?: number;
 };
-
-type LocalDb = {
-  gallery?: GalleryItem[];
-};
-
-const LOCAL_DB_PATH = join(process.cwd(), "data", "local-db.json");
-
-async function readLocalDb(): Promise<LocalDb> {
-  const { readFile } = await import("fs/promises");
-  const raw = await readFile(LOCAL_DB_PATH, "utf-8");
-  return JSON.parse(raw) as LocalDb;
-}
-
-async function writeLocalDb(db: LocalDb) {
-  const { writeFile } = await import("fs/promises");
-  await writeFile(LOCAL_DB_PATH, JSON.stringify(db, null, 2));
-}
 
 export async function GET() {
   try {
@@ -37,10 +21,7 @@ export async function GET() {
       ).all();
       return NextResponse.json({ items: results.results ?? [] });
     }
-
-    const localDb = await readLocalDb();
-    const items = localDb.gallery ?? [];
-    return NextResponse.json({ items });
+    return NextResponse.json({ items: [] });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -66,12 +47,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, item: { id, title, type, image_url, sort_order } });
     }
 
-    const localDb = await readLocalDb();
-    const items = localDb.gallery ?? [];
-    items.unshift({ id, title, type, image_url, sort_order: sort_order ?? 0 });
-    localDb.gallery = items;
-    await writeLocalDb(localDb);
-    return NextResponse.json({ success: true, item: { id, title, type, image_url, sort_order } });
+    return NextResponse.json(
+      { error: "D1 is not configured in this environment." },
+      { status: 500 }
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -96,23 +75,10 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    const localDb = await readLocalDb();
-    const items = localDb.gallery ?? [];
-    const index = items.findIndex((i) => i.id === id);
-    if (index === -1) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
-    const existing = items[index];
-    items[index] = {
-      ...existing,
-      title: title ?? existing.title,
-      type: type ?? existing.type,
-      image_url: image_url ?? existing.image_url,
-      sort_order: typeof sort_order === "number" ? sort_order : existing.sort_order ?? 0,
-    };
-    localDb.gallery = items;
-    await writeLocalDb(localDb);
-    return NextResponse.json({ success: true });
+    return NextResponse.json(
+      { error: "D1 is not configured in this environment." },
+      { status: 500 }
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -132,10 +98,10 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    const localDb = await readLocalDb();
-    localDb.gallery = (localDb.gallery ?? []).filter((i) => i.id !== id);
-    await writeLocalDb(localDb);
-    return NextResponse.json({ success: true });
+    return NextResponse.json(
+      { error: "D1 is not configured in this environment." },
+      { status: 500 }
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

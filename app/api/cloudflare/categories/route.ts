@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { join } from "path";
 import { getCloudflareEnv } from "@/lib/cloudflare";
+
+export const runtime = "edge";
 
 type LocalCategory = {
   slug: string;
@@ -9,35 +10,11 @@ type LocalCategory = {
   hero_image_url?: string;
 };
 
-type LocalDb = {
-  categories?: LocalCategory[];
-  designs?: any[];
-  variants?: any[];
-};
-
-const LOCAL_DB_PATH = join(process.cwd(), "data", "local-db.json");
-
 const DEFAULT_CATEGORIES: LocalCategory[] = [
   { slug: "marble", name: "Marble", description: "", hero_image_url: "" },
   { slug: "wood", name: "Wood", description: "", hero_image_url: "" },
   { slug: "hybrid", name: "Hybrid", description: "", hero_image_url: "" },
 ];
-
-async function readLocalDb(): Promise<LocalDb> {
-  const { readFile } = await import("fs/promises");
-  const raw = await readFile(LOCAL_DB_PATH, "utf-8");
-  const db = JSON.parse(raw) as LocalDb;
-  if (!db.categories || db.categories.length === 0) {
-    db.categories = DEFAULT_CATEGORIES;
-    await writeLocalDb(db);
-  }
-  return db;
-}
-
-async function writeLocalDb(db: LocalDb) {
-  const { writeFile } = await import("fs/promises");
-  await writeFile(LOCAL_DB_PATH, JSON.stringify(db, null, 2));
-}
 
 export async function GET(req: NextRequest) {
   try {
@@ -61,15 +38,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ categories: results.results ?? [] });
     }
 
-    const localDb = await readLocalDb();
-    const categories = localDb.categories ?? DEFAULT_CATEGORIES;
-
     if (slug) {
-      const category = categories.find((c) => c.slug === slug);
+      const category = DEFAULT_CATEGORIES.find((c) => c.slug === slug) ?? null;
       return NextResponse.json({ category });
     }
 
-    return NextResponse.json({ categories });
+    return NextResponse.json({ categories: DEFAULT_CATEGORIES });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -121,26 +95,10 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    const localDb = await readLocalDb();
-    const categories = localDb.categories ?? DEFAULT_CATEGORIES;
-    const index = categories.findIndex((c) => c.slug === slug);
-    if (index === -1) {
-      return NextResponse.json({ error: "Category not found" }, { status: 404 });
-    }
-
-    const existing = categories[index];
-    const updated = {
-      ...existing,
-      name: name ?? existing.name,
-      description: description ?? existing.description,
-      hero_image_url: hero_image_url ?? existing.hero_image_url,
-    };
-
-    categories[index] = updated;
-    localDb.categories = categories;
-    await writeLocalDb(localDb);
-
-    return NextResponse.json({ success: true, category: updated });
+    return NextResponse.json(
+      { error: "Local category updates are unavailable in Edge runtime." },
+      { status: 501 }
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

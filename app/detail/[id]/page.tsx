@@ -9,6 +9,8 @@ import { buildImageMapFromDesign } from "@/lib/marbleDesigns";
 import { getDesignRecord, getDesignVariants } from "@/lib/designsData";
 import type { OptionGroup } from "@/lib/data";
 
+export const runtime = "edge";
+
 const CTA_WHATSAPP = "https://wa.me/1234567890"; // replace later
 
 type SwatchProps = {
