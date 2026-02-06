@@ -8,12 +8,18 @@ export interface CloudflareEnv {
 
 // Check if we're running in Cloudflare Workers environment
 export function getCloudflareEnv(): CloudflareEnv | null {
-  // In Next.js API routes running on Cloudflare Pages,
-  // bindings are available via process.env
-  if (typeof process !== 'undefined' && process.env) {
+  // Prefer global bindings in Workers/Pages
+  const globalDb = (globalThis as any).DB;
+  const globalImages = (globalThis as any).IMAGES;
+  if (globalDb && globalImages) {
+    return { DB: globalDb, IMAGES: globalImages };
+  }
+
+  // Fallback to process.env if available
+  if (typeof process !== "undefined" && process.env) {
     const db = (process.env as any).DB;
     const images = (process.env as any).IMAGES;
-    
+
     if (db && images) {
       return { DB: db, IMAGES: images };
     }
