@@ -24,6 +24,7 @@ export default function AdminDashboardPage() {
   >([]);
   const [galleryEdits, setGalleryEdits] = useState<Record<string, { title: string; type: string; sort_order?: number; image_url: string }>>({});
   const [galleryFiles, setGalleryFiles] = useState<Record<string, File | null>>({});
+  const [galleryDirty, setGalleryDirty] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [createdDesignName, setCreatedDesignName] = useState<string | null>(null);
@@ -189,6 +190,7 @@ export default function AdminDashboardPage() {
         };
       });
       setGalleryEdits(editMap);
+      setGalleryDirty({});
     } catch (err: any) {
       setError(err?.message ?? "Failed to load gallery");
     }
@@ -776,64 +778,72 @@ export default function AdminDashboardPage() {
                       <div className="grid grid-cols-1 gap-2 text-xs">
                         <input
                           value={galleryEdits[item.id]?.title ?? item.title}
-                          onChange={(e) =>
+                          onChange={(e) => {
                             setGalleryEdits((prev) => ({
                               ...prev,
                               [item.id]: {
                                 ...(prev[item.id] ?? item),
                                 title: e.target.value,
                               },
-                            }))
-                          }
+                            }));
+                            setGalleryDirty((prev) => ({ ...prev, [item.id]: true }));
+                          }}
                           className="w-full rounded-md border border-gray-300 px-2.5 py-1.5"
                         />
                         <div className="grid grid-cols-2 gap-2">
                           <input
                             value={galleryEdits[item.id]?.type ?? item.type}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               setGalleryEdits((prev) => ({
                                 ...prev,
                                 [item.id]: {
                                   ...(prev[item.id] ?? item),
                                   type: e.target.value,
                                 },
-                              }))
-                            }
+                              }));
+                              setGalleryDirty((prev) => ({ ...prev, [item.id]: true }));
+                            }}
                             className="w-full rounded-md border border-gray-300 px-2.5 py-1.5"
                           />
                           <input
                             type="number"
                             value={galleryEdits[item.id]?.sort_order ?? item.sort_order ?? 0}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               setGalleryEdits((prev) => ({
                                 ...prev,
                                 [item.id]: {
                                   ...(prev[item.id] ?? item),
                                   sort_order: Number(e.target.value),
                                 },
-                              }))
-                            }
+                              }));
+                              setGalleryDirty((prev) => ({ ...prev, [item.id]: true }));
+                            }}
                             className="w-full rounded-md border border-gray-300 px-2.5 py-1.5"
                           />
                         </div>
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={(e) =>
+                          onChange={(e) => {
                             setGalleryFiles((prev) => ({
                               ...prev,
                               [item.id]: e.target.files?.[0] ?? null,
-                            }))
-                          }
+                            }));
+                            setGalleryDirty((prev) => ({ ...prev, [item.id]: true }));
+                          }}
                           className="block w-full text-xs text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-900 file:text-white hover:file:bg-gray-800"
                         />
                         <div className="flex items-center justify-between">
-                          <button
-                            onClick={() => handleSaveGallery(item.id)}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-300 hover:border-gray-400"
-                          >
-                            Save
-                          </button>
+                          {galleryDirty[item.id] ? (
+                            <button
+                              onClick={() => handleSaveGallery(item.id)}
+                              className="text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-300 hover:border-gray-400"
+                            >
+                              Save
+                            </button>
+                          ) : (
+                            <span className="text-[11px] text-gray-400">No changes</span>
+                          )}
                           <button
                             onClick={() => handleDeleteGallery(item.id)}
                             className="text-xs text-red-600 hover:text-red-700"
